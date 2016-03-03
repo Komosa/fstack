@@ -4,6 +4,7 @@ This lib provides file based stack of strings.
 Status: only one unit test at the moment, but API will remain stable.
 
 [![GoDoc](https://godoc.org/github.com/Komosa/fstack?status.svg)](https://godoc.org/github.com/Komosa/fstack)
+
 List of operations:
 - `New(filename string) (*Stack, error)`, open given file and read stack from it;
 - methods with `*Stack` receiver:
