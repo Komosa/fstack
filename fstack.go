@@ -4,6 +4,7 @@ package fstack
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -75,5 +76,15 @@ func (st *Stack) Size() int {
 // Returned value comes from underlying `file.Close()`.
 // _perm_ is used for file creation if file doesn't exist before.
 func (st *Stack) Sync(perm os.FileMode) error {
+	mkPerm := perm
+	for m := os.FileMode(0001); m <= 0100; m *= 8 {
+		if perm&(m*6) != 0 {
+			mkPerm |= m
+		}
+	}
+	err := os.MkdirAll(filepath.Dir(st.fname), mkPerm)
+	if err != nil {
+		return err
+	}
 	return ioutil.WriteFile(st.fname, []byte(strings.Join(st.lines, "\n")+"\n"), perm)
 }
