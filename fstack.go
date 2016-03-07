@@ -86,5 +86,8 @@ func (st *Stack) Sync(perm os.FileMode) error {
 	if err != nil {
 		return err
 	}
+	if st.Empty() {
+		return ioutil.WriteFile(st.fname, []byte{}, perm)
+	}
 	return ioutil.WriteFile(st.fname, []byte(strings.Join(st.lines, "\n")+"\n"), perm)
 }

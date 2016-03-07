@@ -11,9 +11,7 @@ import (
 
 func TestNonMod(t *testing.T) {
 	f, err := ioutil.TempFile("", "fstack_test_file")
-	if err != nil {
-		t.Fatal(err)
-	}
+	fatalMaybe(err, t)
 	defer os.Remove(f.Name())
 
 	data := []byte(`bottom
@@ -45,6 +43,26 @@ top
 
 	if !bytes.Equal(data, got) {
 		t.Errorf("file content differs, exp: %#+v, got: %#+v", data, got)
+	}
+}
+
+func TestEmpty(t *testing.T) {
+	f, err := ioutil.TempFile("", "fstack_test_file")
+	fatalMaybe(err, t)
+	defer os.Remove(f.Name())
+
+	st, err := fstack.New(f.Name())
+	fatalMaybe(err, t)
+
+	err = st.Sync(0) // perms doesn't matter, file already exists
+	fatalMaybe(err, t)
+
+	got, err := ioutil.ReadFile(f.Name())
+	fatalMaybe(err, t)
+
+	exp := []byte{}
+	if !bytes.Equal(exp, got) {
+		t.Errorf("file content differs, exp: %#+v, got: %#+v", exp, got)
 	}
 }
 
